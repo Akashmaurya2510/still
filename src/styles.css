@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Newsreader", "Iowan Old Style", Palatino, serif;
+
+  --color-bg: var(--app-bg);
+  --color-fg: var(--app-fg);
+  --color-muted: var(--app-muted);
+  --color-border: var(--app-border);
+  --color-surface: var(--app-surface);
+  --color-accent: var(--app-accent);
+  --color-glass: var(--app-glass);
+  --color-glass-strong: var(--app-glass-strong);
+  --color-danger: var(--app-danger);
+  --color-warn: var(--app-warn);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 9999px;
+
+  --shadow-border: var(--app-shadow-border);
+  --shadow-glass: var(--app-shadow-glass);
+
+  --ease-out-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root,
+html[data-theme="oled"] {
+  --app-bg: #050506;
+  --app-fg: #f4f4f5;
+  --app-muted: #8e8e93;
+  --app-border: rgb(255 255 255 / 0.08);
+  --app-surface: rgb(18 18 20 / 0.72);
+  --app-accent: #c9cdd4;
+  --app-glass: rgb(255 255 255 / 0.06);
+  --app-glass-strong: rgb(255 255 255 / 0.12);
+  --app-danger: #ff6b6b;
+  --app-warn: #f0c36a;
+  --app-overlay: rgb(0 0 0 / 0.55);
+  --app-shadow-border: 0 0 0 1px rgb(255 255 255 / 0.08);
+  --app-shadow-glass:
+    0 0 0 1px rgb(255 255 255 / 0.1),
+    inset 0 1px 0 rgb(255 255 255 / 0.16),
+    0 18px 40px -24px rgb(0 0 0 / 0.7);
+  color-scheme: dark;
+}
+
+html[data-theme="light"] {
+  --app-bg: #eceff3;
+  --app-fg: #12141a;
+  --app-muted: #5b6472;
+  --app-border: rgb(18 20 26 / 0.08);
+  --app-surface: rgb(255 255 255 / 0.62);
+  --app-accent: #1f2937;
+  --app-glass: rgb(255 255 255 / 0.55);
+  --app-glass-strong: rgb(255 255 255 / 0.78);
+  --app-danger: #dc4a4a;
+  --app-warn: #b45309;
+  --app-overlay: rgb(15 23 42 / 0.28);
+  --app-shadow-border:
+    0 0 0 1px rgb(15 23 42 / 0.06),
+    0 1px 2px -1px rgb(15 23 42 / 0.06);
+  --app-shadow-glass:
+    0 0 0 1px rgb(255 255 255 / 0.7),
+    inset 0 1px 0 rgb(255 255 255 / 0.85),
+    0 18px 40px -24px rgb(15 23 42 / 0.22);
+  color-scheme: light;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html,
+  body,
+  #app,
+  #root {
+    height: 100dvh;
+    min-height: 100dvh;
+    background: var(--app-bg);
+    color: var(--app-fg);
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  input,
+  textarea {
+    font-family: inherit;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .glass {
+    background: var(--app-glass);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    box-shadow: var(--shadow-glass);
+  }
+
+  .glass-strong {
+    background: var(--app-glass-strong);
+    backdrop-filter: blur(36px) saturate(190%);
+    -webkit-backdrop-filter: blur(36px) saturate(190%);
+    box-shadow: var(--shadow-glass);
+  }
+}
+
+.app-shell {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, color-mix(in srgb, var(--app-fg) 8%, transparent), transparent 60%),
+    radial-gradient(ellipse 40% 30% at 90% 90%, color-mix(in srgb, var(--app-fg) 5%, transparent), transparent 70%),
+    var(--app-bg);
+}
+
+@media (min-width: 768px) {
+  .app-shell {
+    align-items: center;
+    padding-block: 2.5rem;
+  }
+
+  .app-frame {
+    height: min(900px, calc(100dvh - 5rem));
+    flex: none;
+    border-radius: 2rem;
+    box-shadow:
+      0 40px 100px -30px rgb(0 0 0 / 0.55),
+      var(--app-shadow-border);
+    overflow: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
