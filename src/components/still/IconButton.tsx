@@ -17,7 +17,7 @@ export function IconButton({ label, onClick, className, children, disabled }: Pr
       disabled={disabled}
       className={cn(
         "relative flex size-11 items-center justify-center rounded-full text-fg",
-        "transition-colors duration-150 ease-[var(--ease-out-smooth)]",
+        "transition-[background-color,transform,color] duration-150 ease-[var(--ease-out-smooth)]",
         "hover:bg-fg/8 active:scale-[0.96] disabled:opacity-40",
         className,
       )}

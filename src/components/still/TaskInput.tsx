@@ -61,40 +61,49 @@ export function TaskInput() {
           enterKeyHint="done"
         />
       </div>
-      <div className="flex items-center gap-1.5 px-1 pb-1 pt-0.5">
-        <button
-          type="button"
-          onClick={() => setStarred((v) => !v)}
-          className={cn(
-            "flex h-9 items-center gap-1.5 rounded-pill px-3 text-xs font-medium",
-            starred ? "bg-fg text-bg" : "bg-fg/6 text-muted hover:text-fg",
-          )}
-        >
+      <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto px-1 pb-1 pt-0.5">
+        <Chip active={starred} onClick={() => setStarred((v) => !v)}>
           <Star className={cn("size-3.5", starred && "fill-current")} strokeWidth={1.75} />
           Star
-        </button>
-        <button
-          type="button"
+        </Chip>
+        <Chip
+          active={due === "today"}
           onClick={() => setDue((d) => (d === "today" ? "none" : "today"))}
-          className={cn(
-            "flex h-9 items-center gap-1.5 rounded-pill px-3 text-xs font-medium",
-            due === "today" ? "bg-fg text-bg" : "bg-fg/6 text-muted hover:text-fg",
-          )}
         >
           <Calendar className="size-3.5" strokeWidth={1.75} />
           Today
-        </button>
-        <button
-          type="button"
+        </Chip>
+        <Chip
+          active={due === "tomorrow"}
           onClick={() => setDue((d) => (d === "tomorrow" ? "none" : "tomorrow"))}
-          className={cn(
-            "flex h-9 items-center gap-1.5 rounded-pill px-3 text-xs font-medium",
-            due === "tomorrow" ? "bg-fg text-bg" : "bg-fg/6 text-muted hover:text-fg",
-          )}
         >
           Tomorrow
-        </button>
+        </Chip>
       </div>
     </div>
+  );
+}
+
+function Chip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "flex h-9 shrink-0 items-center gap-1.5 rounded-pill px-3 text-xs font-medium",
+        "transition-colors duration-150",
+        active ? "bg-fg text-bg" : "bg-fg/6 text-muted hover:text-fg",
+      )}
+    >
+      {children}
+    </button>
   );
 }

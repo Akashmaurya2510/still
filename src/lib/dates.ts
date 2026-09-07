@@ -34,3 +34,31 @@ export function isOverdue(dueAt: number | null | undefined, completed: boolean) 
   if (!dueAt || completed) return false;
   return startOfDay(dueAt) < startOfDay();
 }
+
+export function formatDayLabel(ts: number, opts?: { weekday?: boolean }) {
+  const today = startOfDay();
+  const day = startOfDay(ts);
+  const diff = Math.round((day - today) / 86_400_000);
+  if (diff === 0) return "Today";
+  if (diff === -1) return "Yesterday";
+  return new Date(ts).toLocaleDateString(undefined, {
+    weekday: opts?.weekday ? "short" : undefined,
+    month: "short",
+    day: "numeric",
+  });
+}
+
+export function formatTime(ts: number) {
+  return new Date(ts).toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+export function isoDate(ts: number) {
+  const d = new Date(startOfDay(ts));
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}

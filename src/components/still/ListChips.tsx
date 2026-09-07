@@ -16,9 +16,7 @@ export function ListChips() {
             onClick={() => setListScope(list.id)}
             className={cn(
               "shrink-0 rounded-pill px-3.5 py-2 text-sm font-medium transition-colors duration-150",
-              active
-                ? "glass-strong text-fg"
-                : "text-muted hover:bg-fg/6 hover:text-fg",
+              active ? "glass-strong text-fg" : "text-muted hover:bg-fg/6 hover:text-fg",
             )}
           >
             {list.label}

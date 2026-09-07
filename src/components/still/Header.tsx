@@ -1,7 +1,6 @@
-import { Moon, Search, Sun, X } from "lucide-react";
 import { greeting } from "@/lib/dates";
 import { useAppStore } from "@/lib/store";
-import { IconButton } from "./IconButton";
+import { HeaderActions } from "./HeaderActions";
 
 type Props = {
   searching: boolean;
@@ -9,9 +8,8 @@ type Props = {
 };
 
 export function Header({ searching, onToggleSearch }: Props) {
-  const theme = useAppStore((s) => s.theme);
   const tasks = useAppStore((s) => s.tasks);
-  const toggleTheme = useAppStore((s) => s.toggleTheme);
+  const profileName = useAppStore((s) => s.profileName);
 
   const activeCount = tasks.filter((t) => !t.completed).length;
   const total = tasks.length;
@@ -24,20 +22,24 @@ export function Header({ searching, onToggleSearch }: Props) {
     day: "numeric",
   });
 
+  const hello = profileName.trim()
+    ? `${greeting()}, ${profileName.trim()}`
+    : `${greeting()}`;
+
   return (
     <header className="flex items-start justify-between gap-3">
       <div className="min-w-0">
         <p className="text-xs font-medium tracking-wide text-muted">{dateLabel}</p>
-        <h1 className="font-display mt-0.5 text-3xl font-medium tracking-tight text-fg">
+        <h1 className="font-display mt-0.5 text-3xl font-medium tracking-tight text-fg sm:text-4xl">
           Still
         </h1>
-        <p className="mt-0.5 text-sm text-muted">{greeting()}.</p>
+        <p className="mt-0.5 truncate text-sm text-muted">{hello}.</p>
       </div>
 
-      <div className="flex items-center gap-1">
+      <div className="flex shrink-0 items-center gap-1">
         {total > 0 && (
           <div
-            className="glass mr-1 flex items-center gap-2 rounded-pill px-3 py-1.5"
+            className="glass mr-1 hidden items-center gap-2 rounded-pill px-3 py-1.5 sm:flex"
             aria-label={`${completed} of ${total} completed`}
           >
             <div className="h-1.5 w-11 overflow-hidden rounded-pill bg-fg/10">
@@ -51,28 +53,7 @@ export function Header({ searching, onToggleSearch }: Props) {
             </span>
           </div>
         )}
-
-        <IconButton
-          label={searching ? "Close search" : "Search"}
-          onClick={onToggleSearch}
-        >
-          {searching ? (
-            <X className="size-5" strokeWidth={1.75} />
-          ) : (
-            <Search className="size-5" strokeWidth={1.75} />
-          )}
-        </IconButton>
-
-        <IconButton
-          label={theme === "oled" ? "Switch to light mode" : "Switch to OLED mode"}
-          onClick={toggleTheme}
-        >
-          {theme === "oled" ? (
-            <Sun className="size-5" strokeWidth={1.75} />
-          ) : (
-            <Moon className="size-5" strokeWidth={1.75} />
-          )}
-        </IconButton>
+        <HeaderActions searching={searching} onToggleSearch={onToggleSearch} />
       </div>
     </header>
   );

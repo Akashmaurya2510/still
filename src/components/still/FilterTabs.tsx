@@ -23,14 +23,19 @@ export function FilterTabs() {
   };
 
   useEffect(() => {
-    const btn = btnRefs.current[filter];
-    const wrap = wrapRef.current;
-    if (!btn || !wrap) return;
-    const wr = wrap.getBoundingClientRect();
-    const br = btn.getBoundingClientRect();
-    const x = br.left - wr.left;
-    const w = br.width;
-    setPill((prev) => (prev.x === x && prev.w === w ? prev : { x, w }));
+    const measure = () => {
+      const btn = btnRefs.current[filter];
+      const wrap = wrapRef.current;
+      if (!btn || !wrap) return;
+      const wr = wrap.getBoundingClientRect();
+      const br = btn.getBoundingClientRect();
+      const x = br.left - wr.left;
+      const w = br.width;
+      setPill((prev) => (prev.x === x && prev.w === w ? prev : { x, w }));
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
   }, [filter, tasks.length]);
 
   return (
@@ -64,9 +69,7 @@ export function FilterTabs() {
             )}
           >
             <span>{tab.label}</span>
-            <span className="text-xs font-normal tabular-nums opacity-70">
-              {counts[tab.id]}
-            </span>
+            <span className="text-xs font-normal tabular-nums opacity-70">{counts[tab.id]}</span>
           </button>
         );
       })}

@@ -17,6 +17,8 @@ export function TaskItem({ task }: Props) {
   const [notesOpen, setNotesOpen] = useState(false);
   const [dx, setDx] = useState(0);
   const startX = useRef<number | null>(null);
+  const startY = useRef(0);
+  const axis = useRef<"x" | "y" | null>(null);
 
   const due = formatDue(task.dueAt);
   const overdue = isOverdue(task.dueAt, task.completed);
@@ -28,25 +30,37 @@ export function TaskItem({ task }: Props) {
 
   function onPointerDown(e: React.PointerEvent) {
     if (editing) return;
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     startX.current = e.clientX;
+    startY.current = e.clientY;
+    axis.current = null;
   }
 
   function onPointerMove(e: React.PointerEvent) {
     if (startX.current == null) return;
-    const next = Math.max(-96, Math.min(96, e.clientX - startX.current));
-    setDx(next);
+    const ddx = e.clientX - startX.current;
+    const ddy = e.clientY - startY.current;
+    if (!axis.current) {
+      if (Math.abs(ddx) < 8 && Math.abs(ddy) < 8) return;
+      axis.current = Math.abs(ddx) > Math.abs(ddy) ? "x" : "y";
+    }
+    if (axis.current !== "x") return;
+    setDx(Math.max(-96, Math.min(96, ddx)));
   }
 
   function onPointerUp() {
     if (startX.current == null) return;
-    if (dx > 72) {
-      toggleTask(task.id);
-      haptic(14);
-    } else if (dx < -72) {
-      deleteTask(task.id);
-      haptic(18);
+    if (axis.current === "x") {
+      if (dx > 72) {
+        toggleTask(task.id);
+        haptic(14);
+      } else if (dx < -72) {
+        deleteTask(task.id);
+        haptic(18);
+      }
     }
     startX.current = null;
+    axis.current = null;
     setDx(0);
   }
 
@@ -84,9 +98,7 @@ export function TaskItem({ task }: Props) {
             className={cn(
               "relative flex size-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-150",
               "after:absolute after:top-1/2 after:left-1/2 after:size-10 after:-translate-1/2",
-              task.completed
-                ? "border-fg bg-fg text-bg"
-                : "border-muted/60 hover:border-fg/50",
+              task.completed ? "border-fg bg-fg text-bg" : "border-muted/60 hover:border-fg/50",
             )}
           >
             {task.completed && <Check className="size-3.5" strokeWidth={2.5} />}
@@ -129,7 +141,7 @@ export function TaskItem({ task }: Props) {
             aria-label={task.starred ? "Unstar" : "Star"}
             onClick={() => toggleStar(task.id)}
             className={cn(
-              "flex size-9 shrink-0 items-center justify-center rounded-full",
+              "flex size-11 shrink-0 items-center justify-center rounded-full",
               task.starred ? "text-fg" : "text-muted hover:text-fg",
             )}
           >
@@ -140,7 +152,7 @@ export function TaskItem({ task }: Props) {
             type="button"
             aria-label="Delete task"
             onClick={() => deleteTask(task.id)}
-            className="flex size-9 shrink-0 items-center justify-center rounded-full text-muted hover:bg-fg/8 hover:text-fg"
+            className="hidden size-11 shrink-0 items-center justify-center rounded-full text-muted hover:bg-fg/8 hover:text-fg sm:flex"
           >
             <Trash2 className="size-4" strokeWidth={1.75} />
           </button>

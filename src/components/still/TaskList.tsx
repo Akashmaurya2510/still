@@ -15,8 +15,7 @@ export function TaskList() {
       if (filter === "active" && t.completed) return false;
       if (filter === "completed" && !t.completed) return false;
       if (listScope === "starred" && !t.starred) return false;
-      if (listScope !== "all" && listScope !== "starred" && t.listId !== listScope)
-        return false;
+      if (listScope !== "all" && listScope !== "starred" && t.listId !== listScope) return false;
       if (q && !t.title.toLowerCase().includes(q) && !t.notes.toLowerCase().includes(q))
         return false;
       return true;
