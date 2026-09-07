@@ -27,7 +27,7 @@ export function TaskItem({ task }: Props) {
 
   function finishEdit() {
     setEditing(false);
-    updateTask(task.id, editValue);
+    updateTask(task.id, { title: editValue });
   }
 
   return (
