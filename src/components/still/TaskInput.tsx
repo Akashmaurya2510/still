@@ -53,7 +53,7 @@ export function TaskInput() {
           }}
           placeholder="Add a task"
           className={cn(
-            "w-full rounded-xl bg-transparent py-3 pl-11 pr-3",
+            "w-full rounded-xl bg-transparent py-2.5 pl-11 pr-3",
             "text-base text-fg placeholder:text-muted",
             "outline-none",
           )}
@@ -61,7 +61,7 @@ export function TaskInput() {
           enterKeyHint="done"
         />
       </div>
-      <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto px-1 pb-1 pt-0.5">
+      <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto px-1 pb-0.5">
         <Chip active={starred} onClick={() => setStarred((v) => !v)}>
           <Star className={cn("size-3.5", starred && "fill-current")} strokeWidth={1.75} />
           Star
@@ -98,8 +98,8 @@ function Chip({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex h-9 shrink-0 items-center gap-1.5 rounded-pill px-3 text-xs font-medium",
-        "transition-colors duration-150",
+        "flex h-8 shrink-0 items-center gap-1.5 rounded-pill px-3 text-xs font-medium",
+        "transition-[background-color,color,transform] duration-200 ease-[var(--ease-spring)] active:scale-95",
         active ? "bg-fg text-bg" : "bg-fg/6 text-muted hover:text-fg",
       )}
     >

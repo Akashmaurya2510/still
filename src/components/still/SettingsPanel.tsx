@@ -3,7 +3,7 @@ import { Download, Moon, Sun, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { downloadBackup, makeBackup, readBackupFile } from "@/lib/backup";
 import { useAppStore } from "@/lib/store";
-import { cn, haptic, initials } from "@/lib/utils";
+import { cn, haptic, initials, withThemeTransition } from "@/lib/utils";
 import { IconButton } from "./IconButton";
 
 export function SettingsPanel() {
@@ -19,7 +19,23 @@ export function SettingsPanel() {
   const [nameDraft, setNameDraft] = useState(profileName);
   const [pending, setPending] = useState<{ name: string; count: number } | null>(null);
   const [pendingData, setPendingData] = useState<ReturnType<typeof makeBackup> | null>(null);
+  const [mounted, setMounted] = useState(open);
+  const [closing, setClosing] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (open) {
+      setMounted(true);
+      setClosing(false);
+      return;
+    }
+    setClosing(true);
+    const t = window.setTimeout(() => {
+      setMounted(false);
+      setClosing(false);
+    }, 200);
+    return () => window.clearTimeout(t);
+  }, [open]);
 
   useEffect(() => {
     if (open) setNameDraft(profileName);
@@ -72,14 +88,14 @@ export function SettingsPanel() {
     toast.success("Backup restored");
   }
 
-  if (!open) return null;
+  if (!mounted) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6">
       <button
         type="button"
         aria-label="Close settings"
-        className="absolute inset-0 bg-overlay"
+        className={cn("absolute inset-0 bg-overlay", closing ? "overlay-out" : "overlay-in")}
         onClick={() => {
           if (pending) {
             setPending(null);
@@ -93,7 +109,10 @@ export function SettingsPanel() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="settings-title"
-        className="glass-strong relative max-h-[90dvh] w-full overflow-y-auto rounded-t-3xl p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:max-w-md sm:rounded-3xl sm:p-6"
+        className={cn(
+          "glass-strong relative max-h-[90dvh] w-full overflow-y-auto rounded-t-3xl p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:max-w-md sm:rounded-3xl sm:p-6",
+          closing ? "sheet-out" : "sheet-in",
+        )}
       >
         <div className="mb-5 flex items-center justify-between">
           <h2 id="settings-title" className="font-display text-2xl font-medium tracking-tight">
@@ -167,13 +186,13 @@ export function SettingsPanel() {
                   active={theme === "oled"}
                   label="OLED"
                   icon={<Moon className="size-4" strokeWidth={1.75} />}
-                  onClick={() => setTheme("oled")}
+                  onClick={(e) => withThemeTransition(e, () => setTheme("oled"))}
                 />
                 <ThemeChoice
                   active={theme === "light"}
                   label="Light"
                   icon={<Sun className="size-4" strokeWidth={1.75} />}
-                  onClick={() => setTheme("light")}
+                  onClick={(e) => withThemeTransition(e, () => setTheme("light"))}
                 />
               </div>
             </section>
@@ -231,14 +250,15 @@ function ThemeChoice({
   active: boolean;
   label: string;
   icon: React.ReactNode;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        "flex h-12 items-center justify-center gap-2 rounded-2xl text-sm font-medium transition-colors duration-150",
+        "flex h-12 items-center justify-center gap-2 rounded-2xl text-sm font-medium",
+        "transition-[background-color,color,transform] duration-200 ease-[var(--ease-spring)] active:scale-[0.97]",
         active ? "bg-fg text-bg" : "glass text-fg",
       )}
     >

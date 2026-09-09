@@ -26,7 +26,7 @@ export function TaskList() {
   const activeCount = tasks.length - completedCount;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-3">
+    <div className="flex min-h-0 flex-1 flex-col gap-2">
       <div className="flex items-center justify-end px-0.5">
         {completedCount > 0 && (
           <button
@@ -48,7 +48,7 @@ export function TaskList() {
             scoped={listScope !== "all"}
           />
         ) : (
-          <ul className="flex flex-col gap-2.5 pb-8">
+          <ul className="flex flex-col gap-2 pb-6">
             {visible.map((task) => (
               <TaskItem key={task.id} task={task} />
             ))}

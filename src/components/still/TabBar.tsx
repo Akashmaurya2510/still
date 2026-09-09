@@ -41,7 +41,7 @@ function Tab({
       aria-current={active ? "page" : undefined}
       className={cn(
         "flex min-h-12 min-w-24 flex-1 flex-col items-center justify-center gap-0.5 rounded-pill px-4 py-1.5",
-        "text-xs font-medium transition-colors duration-150",
+        "text-xs font-medium transition-[background-color,color,transform] duration-200 ease-[var(--ease-spring)] active:scale-[0.95]",
         active ? "bg-fg/10 text-fg" : "text-muted",
       )}
     >

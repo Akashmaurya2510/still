@@ -30,7 +30,7 @@ export function Header({ searching, onToggleSearch }: Props) {
     <header className="flex items-start justify-between gap-3">
       <div className="min-w-0">
         <p className="text-xs font-medium tracking-wide text-muted">{dateLabel}</p>
-        <h1 className="font-display mt-0.5 text-3xl font-medium tracking-tight text-fg sm:text-4xl">
+        <h1 className="font-display mt-0.5 text-2xl font-medium tracking-tight text-fg sm:text-4xl">
           Still
         </h1>
         <p className="mt-0.5 truncate text-sm text-muted">{hello}.</p>

@@ -18,12 +18,12 @@ export function Sidebar() {
       <button
         type="button"
         onClick={() => setSettingsOpen(true)}
-        className="glass mb-6 flex items-center gap-3 rounded-2xl px-3 py-2.5 text-left"
+        className="glass mb-6 flex items-center gap-3 rounded-2xl px-3 py-2.5 text-left transition-transform duration-200 ease-[var(--ease-spring)] active:scale-[0.98]"
       >
         <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-fg/10 text-xs font-medium">
           {initials(profileName)}
         </span>
-        <span className="min-w-0">
+        <span className="min-w-0 flex-1">
           <span className="block truncate text-sm font-medium text-fg">
             {profileName.trim() || "Still"}
           </span>
@@ -31,6 +31,7 @@ export function Sidebar() {
             {remaining} open
           </span>
         </span>
+        <Settings className="size-4 shrink-0 text-muted" strokeWidth={1.75} />
       </button>
 
       <nav className="flex flex-col gap-1" aria-label="Main">
@@ -68,7 +69,8 @@ export function Sidebar() {
                   type="button"
                   onClick={() => setListScope(list.id)}
                   className={cn(
-                    "flex h-10 items-center justify-between rounded-xl px-3 text-sm transition-colors duration-150",
+                    "flex h-10 items-center justify-between rounded-xl px-3 text-sm",
+                    "transition-[background-color,color,transform] duration-200 ease-[var(--ease-spring)] active:scale-[0.97]",
                     active ? "glass-strong text-fg" : "text-muted hover:bg-fg/6 hover:text-fg",
                   )}
                 >
@@ -83,17 +85,6 @@ export function Sidebar() {
           </div>
         </div>
       )}
-
-      <div className="mt-auto pt-4">
-        <button
-          type="button"
-          onClick={() => setSettingsOpen(true)}
-          className="flex h-11 w-full items-center gap-2 rounded-xl px-3 text-sm text-muted hover:bg-fg/6 hover:text-fg"
-        >
-          <Settings className="size-4" strokeWidth={1.75} />
-          Settings
-        </button>
-      </div>
     </aside>
   );
 }
@@ -114,7 +105,8 @@ function NavLink({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex h-11 items-center gap-2.5 rounded-xl px-3 text-sm font-medium transition-colors duration-150",
+        "flex h-11 items-center gap-2.5 rounded-xl px-3 text-sm font-medium",
+        "transition-[background-color,color,transform] duration-200 ease-[var(--ease-spring)] active:scale-[0.97]",
         active ? "glass-strong text-fg" : "text-muted hover:bg-fg/6 hover:text-fg",
       )}
     >

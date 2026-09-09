@@ -28,6 +28,7 @@
   --shadow-glass: var(--app-shadow-glass);
 
   --ease-out-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 :root,
@@ -38,8 +39,8 @@ html[data-theme="oled"] {
   --app-border: rgb(255 255 255 / 0.08);
   --app-surface: rgb(18 18 20 / 0.72);
   --app-accent: #c9cdd4;
-  --app-glass: rgb(255 255 255 / 0.07);
-  --app-glass-strong: rgb(255 255 255 / 0.14);
+  --app-glass: rgb(255 255 255 / 0.1);
+  --app-glass-strong: rgb(255 255 255 / 0.16);
   --app-danger: #ff6b6b;
   --app-warn: #f0c36a;
   --app-overlay: rgb(0 0 0 / 0.55);
@@ -86,6 +87,7 @@ html[data-theme="light"] {
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
   }
 
   html,
@@ -103,6 +105,13 @@ html[data-theme="light"] {
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button,
+  [role="button"] {
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   h1,
@@ -138,20 +147,24 @@ html[data-theme="light"] {
 
   .glass {
     background: var(--app-glass);
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
     box-shadow: var(--shadow-glass);
   }
 
   .glass-strong {
     background: var(--app-glass-strong);
-    backdrop-filter: blur(48px) saturate(190%);
-    -webkit-backdrop-filter: blur(48px) saturate(190%);
+    backdrop-filter: blur(26px) saturate(190%);
+    -webkit-backdrop-filter: blur(26px) saturate(190%);
     box-shadow: var(--shadow-glass);
   }
 
   .touch-hit {
     position: relative;
+  }
+
+  .swipe-row {
+    touch-action: pan-y;
   }
 
   .touch-hit::after {
@@ -190,9 +203,9 @@ html[data-theme="light"] {
     border-radius: 2.1rem;
     box-shadow: var(--app-frame-shadow);
     overflow: hidden;
-    background: color-mix(in srgb, var(--app-bg) 70%, transparent);
-    backdrop-filter: blur(28px) saturate(160%);
-    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    background: color-mix(in srgb, var(--app-bg) 88%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
   }
 }
 
@@ -217,4 +230,109 @@ html[data-theme="light"] {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Telegram-style radial theme switch: disable the browser's default
+   cross-fade so only our JS-driven circle clip-path animation shows. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+@keyframes check-pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-check-pop {
+  animation: check-pop 320ms var(--ease-spring);
+}
+
+@keyframes view-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.view-fade {
+  animation: view-fade-in 220ms var(--ease-out-smooth);
+}
+
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sheet-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes overlay-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.sheet-in {
+  animation: sheet-in 260ms var(--ease-out-smooth);
+}
+
+.sheet-out {
+  animation: sheet-out 200ms var(--ease-out-smooth) forwards;
+}
+
+.overlay-in {
+  animation: overlay-in 200ms ease-out;
+}
+
+.overlay-out {
+  animation: overlay-out 180ms ease-in forwards;
 }

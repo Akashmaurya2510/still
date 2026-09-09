@@ -16,6 +16,7 @@ export function TaskItem({ task }: Props) {
   const [editValue, setEditValue] = useState(task.title);
   const [notesOpen, setNotesOpen] = useState(false);
   const [dx, setDx] = useState(0);
+  const [dragging, setDragging] = useState(false);
   const startX = useRef<number | null>(null);
   const startY = useRef(0);
   const axis = useRef<"x" | "y" | null>(null);
@@ -43,6 +44,7 @@ export function TaskItem({ task }: Props) {
     if (!axis.current) {
       if (Math.abs(ddx) < 8 && Math.abs(ddy) < 8) return;
       axis.current = Math.abs(ddx) > Math.abs(ddy) ? "x" : "y";
+      if (axis.current === "x") setDragging(true);
     }
     if (axis.current !== "x") return;
     setDx(Math.max(-96, Math.min(96, ddx)));
@@ -61,16 +63,33 @@ export function TaskItem({ task }: Props) {
     }
     startX.current = null;
     axis.current = null;
+    setDragging(false);
     setDx(0);
   }
 
   return (
     <li className="relative">
-      <div className="absolute inset-y-1 left-2 right-2 flex items-center justify-between rounded-2xl px-4">
-        <span className={cn("text-xs font-medium", dx > 24 ? "text-fg" : "text-muted")}>
+      <div
+        className={cn(
+          "absolute inset-y-1 left-2 right-2 flex items-center justify-between overflow-hidden rounded-2xl px-4",
+          "transition-colors duration-150",
+          dx > 24 ? "bg-fg/12" : dx < -24 ? "bg-danger/15" : "bg-transparent",
+        )}
+      >
+        <span
+          className={cn(
+            "text-xs font-medium transition-opacity duration-150",
+            dx > 24 ? "text-fg opacity-100" : "text-muted opacity-0",
+          )}
+        >
           {task.completed ? "Undo" : "Done"}
         </span>
-        <span className={cn("text-xs font-medium", dx < -24 ? "text-danger" : "text-muted")}>
+        <span
+          className={cn(
+            "text-xs font-medium transition-opacity duration-150",
+            dx < -24 ? "text-danger opacity-100" : "text-muted opacity-0",
+          )}
+        >
           Delete
         </span>
       </div>
@@ -82,12 +101,12 @@ export function TaskItem({ task }: Props) {
         onPointerCancel={onPointerUp}
         style={{ transform: `translateX(${dx}px)` }}
         className={cn(
-          "glass relative flex flex-col rounded-2xl px-3.5 py-3",
-          "transition-transform duration-150 ease-[var(--ease-out-smooth)]",
-          dx === 0 && "transition-transform",
+          "swipe-row glass relative flex flex-col rounded-2xl px-3 py-2.5",
+          "ease-[var(--ease-out-smooth)]",
+          dragging ? "transition-none" : "transition-transform duration-200",
         )}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <button
             type="button"
             aria-label={task.completed ? "Mark as active" : "Mark as complete"}
@@ -96,12 +115,15 @@ export function TaskItem({ task }: Props) {
               haptic(10);
             }}
             className={cn(
-              "relative flex size-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-150",
+              "relative flex size-6 shrink-0 items-center justify-center rounded-full border-2",
+              "transition-[background-color,border-color,transform] duration-200 ease-[var(--ease-spring)] active:scale-90",
               "after:absolute after:top-1/2 after:left-1/2 after:size-10 after:-translate-1/2",
               task.completed ? "border-fg bg-fg text-bg" : "border-muted/60 hover:border-fg/50",
             )}
           >
-            {task.completed && <Check className="size-3.5" strokeWidth={2.5} />}
+            {task.completed && (
+              <Check className="size-3.5 animate-check-pop" strokeWidth={2.5} />
+            )}
           </button>
 
           {editing ? (
@@ -141,7 +163,8 @@ export function TaskItem({ task }: Props) {
             aria-label={task.starred ? "Unstar" : "Star"}
             onClick={() => toggleStar(task.id)}
             className={cn(
-              "flex size-11 shrink-0 items-center justify-center rounded-full",
+              "relative flex size-9 shrink-0 items-center justify-center rounded-full transition-transform duration-200 ease-[var(--ease-spring)] active:scale-90",
+              "touch-hit",
               task.starred ? "text-fg" : "text-muted hover:text-fg",
             )}
           >
@@ -152,14 +175,14 @@ export function TaskItem({ task }: Props) {
             type="button"
             aria-label="Delete task"
             onClick={() => deleteTask(task.id)}
-            className="hidden size-11 shrink-0 items-center justify-center rounded-full text-muted hover:bg-fg/8 hover:text-fg sm:flex"
+            className="touch-hit relative hidden size-9 shrink-0 items-center justify-center rounded-full text-muted hover:bg-fg/8 hover:text-fg sm:flex"
           >
             <Trash2 className="size-4" strokeWidth={1.75} />
           </button>
         </div>
 
         {(due || task.notes || notesOpen) && (
-          <div className="mt-2 ml-9 flex flex-wrap items-center gap-2">
+          <div className="mt-1.5 ml-9 flex flex-wrap items-center gap-2">
             {due && (
               <span
                 className={cn(
@@ -186,7 +209,7 @@ export function TaskItem({ task }: Props) {
             onChange={(e) => updateTask(task.id, { notes: e.target.value })}
             placeholder="A quiet note…"
             rows={2}
-            className="mt-2 ml-9 w-[calc(100%-2.25rem)] resize-none rounded-xl bg-fg/5 px-3 py-2 text-sm text-fg outline-none placeholder:text-muted"
+            className="mt-1.5 ml-9 w-[calc(100%-2.25rem)] resize-none rounded-xl bg-fg/5 px-3 py-2 text-sm text-fg outline-none placeholder:text-muted"
           />
         )}
       </div>

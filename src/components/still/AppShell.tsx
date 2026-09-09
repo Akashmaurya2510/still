@@ -22,7 +22,9 @@ export function AppShell() {
             <>
               <Sidebar />
               <main className="flex min-h-0 min-w-0 flex-1 flex-col px-4 pb-[max(5.5rem,calc(env(safe-area-inset-bottom)+4.75rem))] pt-[max(1rem,env(safe-area-inset-top))] md:px-6 lg:pb-6 lg:pt-6">
-                {view === "report" ? <ReportView /> : <TasksView />}
+                <div key={view} className="view-fade flex min-h-0 flex-1 flex-col">
+                  {view === "report" ? <ReportView /> : <TasksView />}
+                </div>
               </main>
               <TabBar />
               <SettingsPanel />

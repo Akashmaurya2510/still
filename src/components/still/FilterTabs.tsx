@@ -34,20 +34,31 @@ export function FilterTabs() {
       setPill((prev) => (prev.x === x && prev.w === w ? prev : { x, w }));
     };
     measure();
+
+    // Re-measure once web fonts finish loading, since font-swap can
+    // change button widths after the first paint.
+    document.fonts?.ready?.then(measure).catch(() => {});
+
+    const wrap = wrapRef.current;
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    if (wrap && ro) ro.observe(wrap);
     window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    return () => {
+      window.removeEventListener("resize", measure);
+      ro?.disconnect();
+    };
   }, [filter, tasks.length]);
 
   return (
     <div
       ref={wrapRef}
-      className="glass relative grid grid-cols-3 rounded-2xl p-1.5"
+      className="glass relative grid grid-cols-3 rounded-2xl p-1"
       role="tablist"
       aria-label="Task status"
     >
       <div
         aria-hidden
-        className="glass-strong pointer-events-none absolute top-1.5 bottom-1.5 rounded-xl transition-[transform,width] duration-250 ease-[var(--ease-out-smooth)]"
+        className="glass-strong pointer-events-none absolute top-1 bottom-1 rounded-xl transition-[transform,width] duration-250 ease-[var(--ease-out-smooth)]"
         style={{ width: pill.w || undefined, transform: `translateX(${pill.x}px)` }}
       />
       {TABS.map((tab) => {
@@ -63,8 +74,8 @@ export function FilterTabs() {
             aria-selected={active}
             onClick={() => setFilter(tab.id)}
             className={cn(
-              "relative z-10 flex min-h-12 flex-col items-center justify-center rounded-xl px-2 py-2",
-              "text-sm font-medium tracking-wide transition-colors duration-150",
+              "relative z-10 flex min-h-10 flex-col items-center justify-center rounded-xl px-2 py-1.5",
+              "text-sm font-medium tracking-wide transition-[color,transform] duration-200 ease-[var(--ease-spring)] active:scale-[0.96]",
               active ? "text-fg" : "text-muted hover:text-fg",
             )}
           >
